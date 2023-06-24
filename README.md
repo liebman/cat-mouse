@@ -12,3 +12,5 @@ Simple autonomous differential drive rover with LIDAR in RUST using an esp32s3.
 - [luna](luna) contains a driver for an [i2c based IR time-of-flight](https://www.amazon.com/TF-Luna/dp/B086MJQSLR) proximity detector.
 - [lidar](lidar) implements LIDAR with a speed-controller and a proximity sensor by rotating the proximity sensor at a known degrees/second rate.
 - [rover](rover) runs around autonomously avoiding things.
+
+![Cat Mouse](images/cat-mouse.jpg)
