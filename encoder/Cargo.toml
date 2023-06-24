@@ -1,0 +1,9 @@
+[package]
+name = "encoder"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+esp-idf-sys = { workspace = true }
+esp-idf-hal = { workspace = true }

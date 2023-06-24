@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "CatMouse")(type "KiCad")(uri "${KIPRJMOD}/libs/CatMouse.kicad_sym")(options "")(descr ""))
+)

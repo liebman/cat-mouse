@@ -1,0 +1,18 @@
+[package]
+name = "lidar"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+esp-idf-sys = { workspace = true }
+esp-idf-svc = { workspace = true }
+esp-idf-hal = { workspace = true }
+embedded-svc = { workspace = true }
+embedded-hal = { workspace = true }
+log = { workspace = true }
+shared-bus = { workspace = true }
+retry = { workspace = true }
+speed-control = { path = "../speed-control" }
+luna = { path = "../luna" }
+proximity = { path = "../proximity" }

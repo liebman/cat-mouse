@@ -1,0 +1,14 @@
+.DS_Store
+/.vscode
+/.embuild
+/target
+/cat-mouse.code-workspace
+/data
+/hardware/kicad/gerber
+/hardware/kicad/*-backups
+/hardware/kicad/*-bak
+/hardware/kicad/*.zip
+/hardware/kicad/libs/*.bck
+/hardware/kicad/libs/*.bak
+/hardware/freecad/*.3mf
+/hardware/freecad/*.FCStd1

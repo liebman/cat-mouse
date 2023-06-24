@@ -1,0 +1,15 @@
+[package]
+name = "position-control"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+esp-idf-sys = { workspace = true }
+esp-idf-hal = { workspace = true }
+esp-idf-svc = { workspace = true }
+
+log = { workspace = true }
+pid = { workspace = true }
+
+encoder = { path = "../encoder" }
+speed-control = { path = "../speed-control" }

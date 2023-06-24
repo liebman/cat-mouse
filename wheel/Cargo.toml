@@ -1,0 +1,14 @@
+[package]
+name = "wheel"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+esp-idf-sys = { workspace = true }
+esp-idf-hal = { workspace = true }
+esp-idf-svc = { workspace = true }
+
+log = { workspace = true }
+
+position-control = { path = "../position-control" }
+encoder = { path = "../encoder" }

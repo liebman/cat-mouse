@@ -1,0 +1,36 @@
+[package]
+name = "rover"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+embedded-hal = { workspace = true }
+embedded-svc = { workspace = true }
+esp-idf-sys = { workspace = true }
+esp-idf-hal = { workspace = true }
+esp-idf-svc = { workspace = true }
+anyhow = { workspace = true }
+log = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+shared-bus = { workspace = true }
+url = { workspace = true }
+
+motor = { path = "../motor" }
+encoder = { path = "../encoder" }
+speed-control = { path = "../speed-control" }
+position-control = { path = "../position-control" }
+wheel = { path = "../wheel" }
+differential-drive = { path = "../differential-drive" }
+luna = { path = "../luna" }
+lidar = { path = "../lidar" }
+proximity = { path = "../proximity" }
+
+[build-dependencies]
+embuild = "0.30"
+anyhow = { version = "1" }
+esp-idf-part = { version = "0.2.0" }
+
+[package.metadata.espflash]
+partition_table = "partitions.csv"
