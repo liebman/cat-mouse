@@ -14,3 +14,5 @@ Simple autonomous differential drive rover with LIDAR in RUST using an esp32s3.
 - [rover](rover) runs around autonomously avoiding things.
 
 ![Cat Mouse](images/cat-mouse.jpg)
+
+![Schematic](images/schematic.jpg)
