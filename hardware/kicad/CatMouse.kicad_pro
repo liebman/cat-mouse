@@ -56,16 +56,7 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [
-        "silk_over_copper|119010000|85040000|de51e245-a27c-4a43-a9d6-150e7ff82e45|96f6fc4e-b71b-4c23-90a3-b95d4ac71edb",
-        "silk_over_copper|119010000|92660000|de51e245-a27c-4a43-a9d6-150e7ff82e45|20f6137f-184d-44c0-a21f-fa4089085cf3",
-        "silk_over_copper|127200000|101600000|06223826-442d-48ae-af5b-7e727ec15539|f3f8e943-4a7f-41e4-aa49-89560822c912",
-        "silk_over_copper|127200000|121600000|06223826-442d-48ae-af5b-7e727ec15539|f3f8e943-4a7f-41e4-aa49-89560822c912",
-        "silk_over_copper|131100000|101600000|4c305212-0a8d-47af-a993-c682fdfd43dc|f3f8e943-4a7f-41e4-aa49-89560822c912",
-        "silk_over_copper|131100000|121600000|4c305212-0a8d-47af-a993-c682fdfd43dc|f3f8e943-4a7f-41e4-aa49-89560822c912",
-        "silk_over_copper|146150000|57000000|09e702fe-159a-4c14-8124-4430501dd9ac|9b432157-83bf-4f72-9fab-c35f7a333b7c",
-        "silk_over_copper|164150000|57000000|09e702fe-159a-4c14-8124-4430501dd9ac|f6778f16-3096-4ac0-ad5c-a7c501a20931"
-      ],
+      "drc_exclusions": [],
       "meta": {
         "version": 2
       },
@@ -101,7 +92,7 @@
         "padstack": "error",
         "pth_inside_courtyard": "ignore",
         "shorting_items": "error",
-        "silk_edge_clearance": "warning",
+        "silk_edge_clearance": "ignore",
         "silk_over_copper": "warning",
         "silk_overlap": "warning",
         "skew_out_of_range": "error",
@@ -406,7 +397,7 @@
       "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
-      "simulation_model_issue": "error",
+      "simulation_model_issue": "ignore",
       "unannotated": "error",
       "unit_value_mismatch": "error",
       "unresolved_variable": "error",
@@ -586,6 +577,6 @@
   "text_variables": {
     "AUTHOR": "Christopher B. Liebman",
     "TITLE": "CatMouse",
-    "VERSION": "0.3"
+    "VERSION": "0.4"
   }
 }
