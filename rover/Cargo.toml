@@ -14,7 +14,6 @@ anyhow = { workspace = true }
 log = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-shared-bus = { workspace = true }
 url = { workspace = true }
 
 motor = { path = "../motor" }
@@ -23,9 +22,7 @@ speed-control = { path = "../speed-control" }
 position-control = { path = "../position-control" }
 wheel = { path = "../wheel" }
 differential-drive = { path = "../differential-drive" }
-luna = { path = "../luna" }
 lidar = { path = "../lidar" }
-proximity = { path = "../proximity" }
 
 [build-dependencies]
 embuild = "0.30"

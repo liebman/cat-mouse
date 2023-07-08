@@ -1,13 +1,9 @@
 use std::time::Duration;
 
 use differential_drive::Drive;
-use embedded_hal::delay::DelayUs;
-use embedded_hal::i2c::I2c;
 use encoder::Encoder;
-use esp_idf_hal::delay::FreeRtos as delay;
 use esp_idf_hal::gpio::AnyInputPin;
 use esp_idf_hal::gpio::AnyOutputPin;
-use esp_idf_hal::i2c::I2cError;
 use esp_idf_hal::ledc;
 use esp_idf_hal::ledc::LedcChannel;
 use esp_idf_hal::ledc::LedcTimer;
@@ -15,22 +11,21 @@ use esp_idf_hal::ledc::LedcTimerDriver;
 use esp_idf_hal::ledc::Resolution;
 use esp_idf_hal::pcnt::Pcnt;
 use esp_idf_hal::peripheral::Peripheral;
+use esp_idf_hal::uart;
+use esp_idf_hal::uart::Uart;
 use esp_idf_hal::units::FromValueType;
+use esp_idf_hal::units::Hertz;
 use esp_idf_sys::EspError;
 use lidar::Lidar;
-use log::info;
-use luna::Luna;
-use luna::LunaError;
 use motor::Motor;
 use position_control::PositionControl;
 use position_control::PositionControlError;
-use proximity::Proximity;
 use speed_control::SpeedControl;
 use speed_control::SpeedControlError;
 use wheel::Wheel;
 
 use crate::peripherals::EncoderPeripherals;
-use crate::peripherals::LunaPeripherals;
+use crate::peripherals::LidarPeripherals;
 use crate::peripherals::MotorPeripherals;
 
 const WHEEL_DIAMETER: i32 = 60; // 60 mm wheel diameter
@@ -125,26 +120,20 @@ pub fn drive(
     Drive::new(left_wheel, right_wheel, WHEEL_DISTANCE)
 }
 
-pub fn luna<'d, I2C>(
-    i2c: I2C,
-    peripherals: LunaPeripherals,
-) -> Result<Luna<'d, I2C, AnyInputPin>, LunaError>
-where
-    I2C: I2c<Error = I2cError> + Send,
-{
-    let mut luna = Luna::new(i2c, peripherals.ready)?;
-    // set up luna the way we want
-    info!("rebootting luna");
-    luna.reboot()?;
-    delay.delay_ms(500u32).expect("delay should not fail");
-    info!("rebootting luna complete");
-    luna.set_mode(luna::Mode::Continous)?;
-    Ok(luna)
-}
-
-pub fn lidar(
-    motor: SpeedControl<'static>,
-    proximity: impl Proximity + Send + 'static,
-) -> Result<Lidar, EspError> {
-    Ok(Lidar::new(motor, proximity))
+pub fn lidar<UART: Uart>(
+    peripherals: LidarPeripherals<impl Peripheral<P = UART> + 'static>,
+) -> Result<Lidar<'static>, EspError> {
+    let config = uart::config::Config::default()
+        .baudrate(Hertz(230_400))
+        .data_bits(uart::config::DataBits::DataBits8)
+        .stop_bits(uart::config::StopBits::STOP1)
+        .flow_control(uart::config::FlowControl::None);
+    let uart = uart::UartRxDriver::new(
+        peripherals.uart,
+        peripherals.serial,
+        None::<AnyInputPin>,
+        None::<AnyOutputPin>,
+        &config,
+    )?;
+    Ok(Lidar::new(uart, peripherals.power))
 }

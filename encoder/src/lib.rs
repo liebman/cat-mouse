@@ -31,7 +31,7 @@ impl<'d> Encoder<'d> {
             PcntChannel::Channel0,
             Some(&mut a_pin),
             Some(&mut b_pin),
-            &mut PcntChannelConfig {
+            &PcntChannelConfig {
                 lctrl_mode: PcntControlMode::Reverse,
                 hctrl_mode: PcntControlMode::Keep,
                 pos_mode: PcntCountMode::Decrement,
@@ -44,7 +44,7 @@ impl<'d> Encoder<'d> {
             PcntChannel::Channel1,
             Some(&mut b_pin),
             Some(&mut a_pin),
-            &mut PcntChannelConfig {
+            &PcntChannelConfig {
                 lctrl_mode: PcntControlMode::Reverse,
                 hctrl_mode: PcntControlMode::Keep,
                 pos_mode: PcntCountMode::Increment,

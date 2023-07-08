@@ -1,7 +1,7 @@
+use std::ffi::CStr;
+
 use embedded_hal::delay::DelayUs;
 use esp_idf_hal::delay::FreeRtos as delay;
-use esp_idf_hal::i2c::{I2cConfig, I2cDriver};
-use esp_idf_hal::units::FromValueType;
 use esp_idf_svc::eventloop::EspSystemEventLoop;
 use esp_idf_svc::netif::IpEvent;
 use esp_idf_svc::wifi::WifiEvent;
@@ -29,10 +29,24 @@ mod mqtt;
 mod network;
 mod peripherals;
 
+fn log_compile_info() {
+    esp_idf_sys::esp_app_desc!();
+
+    // WARNING: Bug workaround: time & date are flipped!
+    let date = unsafe { CStr::from_ptr(esp_app_desc.time.as_ptr()) }.to_string_lossy();
+    let time = unsafe { CStr::from_ptr(esp_app_desc.date.as_ptr()) }.to_string_lossy();
+
+    let name = unsafe { CStr::from_ptr(esp_app_desc.project_name.as_ptr()) }.to_string_lossy();
+    let version = unsafe { CStr::from_ptr(esp_app_desc.version.as_ptr()) }.to_string_lossy();
+    let idf = unsafe { CStr::from_ptr(esp_app_desc.idf_ver.as_ptr()) }.to_string_lossy();
+
+    info!("Running {name} v{version} @ IDF v{idf} - compiled {date} {time}");
+}
+
 fn main() -> anyhow::Result<()> {
     esp_idf_sys::link_patches();
     Logger::initialize();
-
+    log_compile_info();
     init_fs()?;
     let config = Config::new("/spiffs/config.json")?;
 
@@ -82,27 +96,23 @@ fn main() -> anyhow::Result<()> {
     let mqtt = Mqtt::new(&config.mqtt_url, &config.mqtt_user, &config.mqtt_pass)?;
     Logger::set_mqtt(mqtt);
 
-    info!("setup i2c shared bus");
-    let i2c_config = I2cConfig::new().baudrate(400.kHz().into());
-    let i2c = shared_bus::new_std!(
-        I2cDriver = I2cDriver::new(
-            peripherals.i2c_unit,
-            peripherals.i2c_pins.sda,
-            peripherals.i2c_pins.scl,
-            &i2c_config
-        )?
-    )
-    .expect("failed to create i2c shared bus");
+    // info!("setup i2c shared bus");
+    // let i2c_config = I2cConfig::new().baudrate(400.kHz().into());
+    // let i2c = shared_bus::new_std!(
+    //     I2cDriver = I2cDriver::new(
+    //         peripherals.i2c_unit,
+    //         peripherals.i2c_pins.sda,
+    //         peripherals.i2c_pins.scl,
+    //         &i2c_config
+    //     )?
+    // )
+    // .expect("failed to create i2c shared bus");
 
     info!("setup motor factory");
     let motor_factory = MotorFactory::new(peripherals.ledc_timer)?;
 
     info!("setup lidar");
-    let motor = motor_factory.motor("lidar", peripherals.lidar_motor, true)?;
-    let encoder = factory::encoder(peripherals.lidar_encoder, true)?;
-    let speed = factory::speed(motor, encoder)?;
-    let luna = factory::luna(i2c.acquire_i2c(), peripherals.luna)?;
-    let lidar = factory::lidar(speed, luna)?;
+    let lidar = factory::lidar(peripherals.lidar)?;
 
     info!("setup motor/encoder/speed/position: left");
     let motor = motor_factory.motor("left", peripherals.left_motor, false)?;

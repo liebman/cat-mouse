@@ -1,6 +1,6 @@
+use esp_idf_part::PartitionTable;
 use std::fs;
 use std::io::Write;
-use esp_idf_part::PartitionTable;
 
 use anyhow::Context;
 
@@ -19,7 +19,7 @@ fn get_spiffs_size_and_address() -> Option<(u32, u32)> {
             return Some((partition.offset(), partition.size()));
         }
     }
-    return None;
+    None
 }
 
 fn make_flashfs_sh() -> anyhow::Result<()> {

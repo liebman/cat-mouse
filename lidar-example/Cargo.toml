@@ -11,12 +11,6 @@ esp-idf-hal = { workspace = true }
 esp-idf-svc = { workspace = true }
 anyhow = { workspace = true }
 log = { workspace = true }
-motor = { path = "../motor" }
-encoder = { path = "../encoder" }
-speed-control = { path = "../speed-control" }
-shared-bus = { workspace = true }
-luna = { path = "../luna" }
-proximity = { path = "../proximity" }
 lidar = { path = "../lidar" }
 
 [build-dependencies]

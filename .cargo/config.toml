@@ -1,3 +1,7 @@
+[alias]
+flash = "espflash flash --monitor  -b 921600 -p /dev/tty.usbmodem14644401"
+monitor = "espflash monitor -b 921600 -p /dev/tty.usbmodem14644401"
+
 [build]
 # Uncomment the relevant target for your chip here (ESP32, ESP32-S2, ESP32-S3 or ESP32-C3)
 #target = "xtensa-esp32-espidf"

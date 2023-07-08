@@ -13,7 +13,6 @@ use esp_idf_sys::EspError;
 use differential_drive::Drive;
 use differential_drive::DriveCmd;
 use lidar::Frame;
-use lidar::LidarCmd;
 use log::*;
 
 use super::BrainCmd;
@@ -38,7 +37,6 @@ enum State {
 #[allow(dead_code)]
 pub(super) struct Simple<'d> {
     brain: Sender<BrainCmd>,
-    lidar: Sender<LidarCmd>,
     drive: Drive<'d>,
     state: State,
     timer: EspTimer,
@@ -49,14 +47,12 @@ pub(super) struct Simple<'d> {
 impl<'d> Simple<'d> {
     pub fn start(
         brain: Sender<BrainCmd>,
-        lidar: Sender<LidarCmd>,
         drive: Drive<'static>,
     ) -> Result<Sender<Event>, BrainError> {
         let (tx, rx) = channel();
         let timer_tx = tx.clone();
         let mut simple = Simple {
             brain,
-            lidar,
             drive,
             state: State::Idle,
             timer: EspTimerService::new()?.timer(move || timer_tx.send(Event::Timeout).unwrap())?,
@@ -64,7 +60,7 @@ impl<'d> Simple<'d> {
             rx,
         };
         std::thread::Builder::new()
-            .stack_size(6144)
+            .stack_size(8192)
             .name("simpleton".into())
             .spawn(move || {
                 info!("starting loop");
@@ -83,7 +79,7 @@ impl<'d> Simple<'d> {
             State::Idle => match event {
                 Event::Start => {
                     info!("Idle received Start");
-                    self.lidar.send(LidarCmd::State(true))?;
+                    self.brain.send(BrainCmd::LidarOnOff(true))?;
                     self.timer.after(Duration::from_secs(5))?;
                     self.state = State::Warmup;
                 }
@@ -93,7 +89,6 @@ impl<'d> Simple<'d> {
                 Event::Stop => {
                     info!("Warmup received Stop");
                     self.drive.send(DriveCmd::Stop)?;
-                    self.lidar.send(LidarCmd::State(false))?;
                     self.state = State::Idle;
                 }
                 Event::Timeout => {
@@ -105,8 +100,8 @@ impl<'d> Simple<'d> {
             State::SearchChoice => match event {
                 Event::Stop => {
                     info!("SearchChoice received Stop");
+                    self.brain.send(BrainCmd::LidarOnOff(false))?;
                     self.drive.send(DriveCmd::Stop)?;
-                    self.lidar.send(LidarCmd::State(false))?;
                     self.state = State::Idle;
                 }
                 Event::Frame(frame) => {
@@ -114,17 +109,17 @@ impl<'d> Simple<'d> {
                     let left = frame.get_range_left();
                     let right = frame.get_range_right();
                     if front > 2000 {
-                        self.display_ranges(&frame, false);
+                        self.display_ranges(&frame);
                         info!("SearchChoice: no search, just go!");
                         self.drive.send(DriveCmd::Move(front as i64))?;
                         self.state = State::Moving;
                     } else if left > right {
-                        self.display_ranges(&frame, false);
+                        self.display_ranges(&frame);
                         info!("SearchChoice: search left");
                         self.drive.send(DriveCmd::Rotate(-270))?;
                         self.state = State::Searching;
                     } else {
-                        self.display_ranges(&frame, false);
+                        self.display_ranges(&frame);
                         info!("SearchChoice: search right");
                         self.drive.send(DriveCmd::Rotate(270))?;
                         self.state = State::Searching;
@@ -135,8 +130,8 @@ impl<'d> Simple<'d> {
             State::Searching => match event {
                 Event::Stop => {
                     info!("Searching received Stop");
+                    self.brain.send(BrainCmd::LidarOnOff(false))?;
                     self.drive.send(DriveCmd::Stop)?;
-                    self.lidar.send(LidarCmd::State(false))?;
                     self.state = State::Idle;
                 }
                 Event::Frame(frame) => {
@@ -144,12 +139,12 @@ impl<'d> Simple<'d> {
                     let left = frame.get_range_left();
                     let right = frame.get_range_right();
                     if left < 100 || right < 100 {
-                        self.display_ranges(&frame, true);
+                        self.display_ranges(&frame);
                         info!("Searching: too close, back to SearchChoice");
                         self.drive.send(DriveCmd::Stop)?;
                         self.state = State::SearchChoice;
                     } else if front > 1000 {
-                        self.display_ranges(&frame, false);
+                        self.display_ranges(&frame);
                         info!("Searching: found a path, go go go!");
                         self.drive.send(DriveCmd::Stop)?;
                         self.drive.send(DriveCmd::Move(front as i64))?;
@@ -165,8 +160,8 @@ impl<'d> Simple<'d> {
             State::Moving => match event {
                 Event::Stop => {
                     info!("Moving received Stop");
+                    self.brain.send(BrainCmd::LidarOnOff(false))?;
                     self.drive.send(DriveCmd::Stop)?;
-                    self.lidar.send(LidarCmd::State(false))?;
                     self.state = State::Idle;
                 }
                 Event::Frame(frame) => {
@@ -174,7 +169,7 @@ impl<'d> Simple<'d> {
                     let left = frame.get_range_left();
                     let right = frame.get_range_right();
                     if front < 500 || left < 250 || right < 250 {
-                        self.display_ranges(&frame, true);
+                        self.display_ranges(&frame);
                         info!("Moving: too close, back to SearchChoice");
                         self.drive.send(DriveCmd::Stop)?;
                         self.state = State::SearchChoice;
@@ -190,15 +185,11 @@ impl<'d> Simple<'d> {
         Ok(())
     }
 
-    fn display_ranges(&self, frame: &Frame, details: bool) {
+    fn display_ranges(&self, frame: &Frame) {
         let left = frame.get_range_left();
         let front = frame.get_range_front();
         let right = frame.get_range_right();
-        let extra = match details {
-            true => format!(" frame: {frame}"),
-            false => "".to_string(),
-        };
-        info!("l/f/r: {left:.2} / {front:.2} / {right:.2}{extra}");
+        info!("l/f/r: {left:.2} / {front:.2} / {right:.2}");
     }
 
     pub fn run(&self) -> Result<(), BrainError> {
@@ -210,20 +201,14 @@ impl<'d> Simple<'d> {
 #[derive(Debug)]
 pub enum BrainError {
     Esp(EspError),
-    Lidar(SendError<LidarCmd>),
     Drive(SendError<DriveCmd>),
     IO(std::io::Error),
+    Brain(SendError<BrainCmd>),
 }
 
 impl From<EspError> for BrainError {
     fn from(e: EspError) -> Self {
         BrainError::Esp(e)
-    }
-}
-
-impl From<SendError<LidarCmd>> for BrainError {
-    fn from(e: SendError<LidarCmd>) -> Self {
-        BrainError::Lidar(e)
     }
 }
 
@@ -236,5 +221,11 @@ impl From<SendError<DriveCmd>> for BrainError {
 impl From<std::io::Error> for BrainError {
     fn from(e: std::io::Error) -> Self {
         BrainError::IO(e)
+    }
+}
+
+impl From<SendError<BrainCmd>> for BrainError {
+    fn from(e: SendError<BrainCmd>) -> Self {
+        BrainError::Brain(e)
     }
 }

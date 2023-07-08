@@ -8,18 +8,15 @@ members = [
     "encoder-example",
     "lidar",
     "lidar-example",
-    "luna",
-    "luna-example",
     "motor",
     "motor-example",
-    "proximity",
     "position-control",
     "position-control-example",
     "speed-control",
     "speed-control-example",
     "wheel",
 ]
-
+exclude = ["lidar", "lidar-example", "luna", "luna-example"]
 [workspace.package]
 version = "0.1.0"
 authors = ["Christopher Liebman <liebman@zod.com>"]
@@ -29,21 +26,19 @@ edition = "2021"
 [workspace.dependencies]
 bitflags = { version = "2.0.0-rc.1" }
 embedded-hal = { version = "=1.0.0-alpha.9" }
-embedded-svc = { version = "0.24", features = ["nightly", "experimental"] }
-esp-idf-hal = { version = "0.40.1" }
-esp-idf-svc = { version = "0.45.0", features = ["nightly", "experimental"] }
-esp-idf-sys = { version = "0.32.1", features = ["binstart"] }
+embedded-svc = { version = "0.24", features = ["experimental"] }
+esp-idf-hal = { version = "0.40" }
+esp-idf-svc = { version = "0.45", features = ["experimental"] }
+esp-idf-sys = { version = "0.32", features = ["binstart"] }
+lidar-ld19 = { version = "0", path = "../lidar-ld19" }
 log = { version = "0.4" }
 pid = { version = "3.0.0" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
-shared-bus = { version = "=0.2.5", features = ["std", "xtensa", "eh-alpha"] }
+#shared-bus = { version = "=0.2.5", features = ["std", "xtensa", "eh-alpha"] }
 anyhow = { version = "1" }
 retry = { version = "2.0.0" }
 url = { version = "2.3.1" }
-
-#[patch.'https://github.com/esp-rs/esp-idf-hal']
-#esp-idf-hal = { path = "../esp-idf-hal" }
 
 [patch.crates-io]
 esp-idf-hal = { git = "https://github.com/liebman/esp-idf-hal", branch = "pcnt_idf_v4" }

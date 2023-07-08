@@ -55,11 +55,6 @@ impl HttpController {
             Self::handle_brain(&b, request)
         })?;
 
-        let b = brain.clone();
-        server.fn_handler("/lidar", Method::Get, move |request| {
-            Self::handle_lidar(&b, request)
-        })?;
-
         server.fn_handler("/drive", Method::Get, move |request| {
             Self::handle_drive(&brain, request)
         })?;
@@ -123,23 +118,6 @@ impl HttpController {
             }
         }
         brain.send(crate::brain::BrainCmd::State(state))?;
-        request.into_ok_response()?;
-        Ok(())
-    }
-
-    fn handle_lidar(
-        brain: &Brain,
-        mut request: Request<&mut EspHttpConnection<'_>>,
-    ) -> HandlerResult {
-        let mut state = false;
-        let url = Self::parse_uri(request.connection().uri())?;
-        for (n, v) in url.query_pairs() {
-            info!("name={} value={}", n, v);
-            if n == "state" {
-                state = Self::value_to_bool(v.borrow());
-            }
-        }
-        brain.send(crate::brain::BrainCmd::Lidar(state))?;
         request.into_ok_response()?;
         Ok(())
     }
