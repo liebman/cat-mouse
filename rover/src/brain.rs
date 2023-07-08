@@ -77,7 +77,7 @@ impl Brain {
                                 BrainCmd::LidarOnOff(value) => {
                                     info!("lidar on/off({value:?})");
                                     lidar.set_power(value)
-                                },
+                                }
                             }
                         }
                         simpleton
