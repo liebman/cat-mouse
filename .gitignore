@@ -5,9 +5,11 @@
 /cat-mouse.code-workspace
 /data
 /hardware/kicad/gerber
+/hardware/kicad/stencil
 /hardware/kicad/*-backups
 /hardware/kicad/*-bak
 /hardware/kicad/*.zip
+/hardware/kicad/~*.lck
 /hardware/kicad/libs/*.bck
 /hardware/kicad/libs/*.bak
 /hardware/freecad/*.3mf
