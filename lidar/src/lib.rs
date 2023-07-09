@@ -139,10 +139,10 @@ impl<'a> Lidar<'a> {
                             data.lock().unwrap().reset();
                             // wait for lidar to be enabled
                             while !running.load(Ordering::SeqCst) {
-                                delay.delay_ms(100).unwrap();
+                                delay.delay_ms(100);
                             }
                             // delay for lidar to get up to speed
-                            delay.delay_ms(6000).unwrap();
+                            delay.delay_ms(6000);
                         }
                         let mut buffer = [0u8];
                         serial

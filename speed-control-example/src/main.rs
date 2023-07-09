@@ -66,6 +66,6 @@ fn main() -> anyhow::Result<()> {
     lidar.send(SpeedControlCmd::SetSpeed(360.0))?;
 
     loop {
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
 }

@@ -4,22 +4,19 @@ use std::sync::Mutex;
 use embedded_svc::wifi::AuthMethod;
 use embedded_svc::wifi::ClientConfiguration;
 use embedded_svc::wifi::Configuration;
-use embedded_svc::wifi::Wifi;
 use esp_idf_hal::modem::WifiModemPeripheral;
 use esp_idf_hal::peripheral::Peripheral;
 use esp_idf_svc::eventloop::EspSystemEventLoop;
 use esp_idf_svc::mdns::EspMdns;
-use esp_idf_svc::netif::EspNetif;
-use esp_idf_svc::netif::EspNetifWait;
 use esp_idf_svc::nvs::EspDefaultNvsPartition;
+use esp_idf_svc::wifi::BlockingWifi;
 use esp_idf_svc::wifi::EspWifi;
-use esp_idf_svc::wifi::WifiWait;
 use esp_idf_sys::EspError;
 use log::*;
 
 #[derive(Clone)]
 pub struct Network<'d> {
-    wifi: Arc<Mutex<EspWifi<'d>>>,
+    wifi: Arc<Mutex<BlockingWifi<EspWifi<'d>>>>,
     _mdns: Arc<Mutex<EspMdns>>,
 }
 
@@ -40,7 +37,10 @@ impl<'d> Network<'d> {
             warn!("Wifi password is empty");
         }
         let nvs = EspDefaultNvsPartition::take()?;
-        let mut wifi = EspWifi::new(modem, sysloop.clone(), Some(nvs))?;
+        let mut wifi = BlockingWifi::wrap(
+            EspWifi::new(modem, sysloop.clone(), Some(nvs))?,
+            sysloop,
+        )?;
         info!("setting Wifi configuration");
         wifi.set_configuration(&Configuration::Client(ClientConfiguration {
             ssid: ssid.into(),
@@ -49,22 +49,15 @@ impl<'d> Network<'d> {
             ..Default::default()
         }))?;
 
-        let wait = WifiWait::new(&sysloop)?;
         info!("starting Wifi");
         wifi.start()?;
-        wait.wait(|| wifi.is_started().unwrap());
 
         info!("connecting Wifi");
         wifi.connect()?;
-        wait.wait(|| wifi.is_connected().unwrap());
         info!("Wifi connected!");
 
         info!("wait for ip address");
-        let netif_wait = EspNetifWait::new::<EspNetif>(wifi.sta_netif(), &sysloop)?;
-
-        // Wait for DHCP to deliver IP
-        netif_wait
-            .wait(|| wifi.sta_netif().get_ip_info().unwrap().ip != std::net::Ipv4Addr::UNSPECIFIED);
+        wifi.wait_netif_up()?;
 
         // add mdns
         let mut mdns = EspMdns::take()?;

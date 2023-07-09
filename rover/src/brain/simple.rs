@@ -193,7 +193,7 @@ impl<'d> Simple<'d> {
     }
 
     pub fn run(&self) -> Result<(), BrainError> {
-        let _ = delay.delay_ms(100);
+        delay.delay_ms(100);
         Ok(())
     }
 }

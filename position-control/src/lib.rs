@@ -37,7 +37,7 @@ pub enum PositionControlCmd {
     SpeedCmd(SpeedControlCmd),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct PositionControl<'d> {
     tx: Sender<PositionControlCmd>,
     speed: SpeedControl<'d>,

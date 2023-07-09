@@ -35,7 +35,7 @@ pub enum SpeedControlCmd {
     SetPid((f32, f32, f32)),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct SpeedControl<'d> {
     name: Arc<str>,
     tx: Sender<SpeedControlCmd>,

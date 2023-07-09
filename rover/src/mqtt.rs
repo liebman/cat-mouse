@@ -26,7 +26,7 @@ impl Mqtt {
         let client = EspMqttClient::new(
             url,
             &conf,
-            |data: &Result<Event<EspMqttMessage>, EspError>| {
+            |data: &'_ Result<Event<EspMqttMessage<'_>>, EspError>| {
                 match data {
                     Ok(msg) => {
                         stdout()

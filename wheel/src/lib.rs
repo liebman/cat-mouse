@@ -6,7 +6,7 @@ use position_control::PositionControl;
 use position_control::PositionControlCmd;
 use position_control::PositionControlError;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Wheel<'d> {
     degrees_per_mm: f64,
     position: PositionControl<'d>,

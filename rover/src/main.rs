@@ -136,7 +136,7 @@ fn main() -> anyhow::Result<()> {
     info!("server is up!");
 
     loop {
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
 }
 

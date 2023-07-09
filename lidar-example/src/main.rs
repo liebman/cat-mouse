@@ -39,11 +39,11 @@ fn main() -> anyhow::Result<()> {
 
         info!("wait for lidar to get up to speed and sync");
         while !lidar.is_synced() {
-            delay.delay_ms(100).unwrap();
+            delay.delay_ms(100);
         }
 
         info!("wait for lidar to get a full sweep");
-        delay.delay_ms(2000).unwrap();
+        delay.delay_ms(2000);
 
         // take readings once a second for a a bit
         for _ in 0..20 {
@@ -51,12 +51,12 @@ fn main() -> anyhow::Result<()> {
             let front = lidar.get_range_front();
             let right = lidar.get_range_right();
             info!("l/f/r: {left:.2} / {front:.2} / {right:.2}");
-            delay.delay_ms(1000).unwrap();
+            delay.delay_ms(1000);
         }
 
         // turn off lidar for a while
         info!("power lidar off");
         lidar.set_power_off();
-        delay.delay_ms(60000).unwrap();
+        delay.delay_ms(60000);
     }
 }

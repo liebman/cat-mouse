@@ -50,7 +50,7 @@ fn main() -> anyhow::Result<()> {
     motor_right
         .set_percent(75.0)
         .context("set right motor percent")?;
-    delay.delay_ms(10000)?;
+    delay.delay_ms(10000);
     motor_left
         .set_percent(0.0)
         .context("set left motor 0.0 percent")?;
@@ -59,6 +59,6 @@ fn main() -> anyhow::Result<()> {
         .context("set right motor 0.0 percent")?;
 
     loop {
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
 }

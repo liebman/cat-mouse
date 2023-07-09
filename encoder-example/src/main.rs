@@ -45,6 +45,6 @@ fn main() -> anyhow::Result<()> {
             println!("left={left} right={right}");
             (last_left, last_right) = (left, right);
         }
-        delay.delay_ms(10)?;
+        delay.delay_ms(10);
     }
 }

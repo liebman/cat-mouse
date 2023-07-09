@@ -3,12 +3,13 @@ use std::sync::atomic::AtomicI64;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
+use esp_idf_hal::gpio::AnyInputPin;
 use esp_idf_hal::gpio::InputPin;
 use esp_idf_hal::pcnt::*;
 use esp_idf_hal::peripheral::Peripheral;
 use esp_idf_sys::EspError;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Encoder<'d> {
     pcnt: Arc<PcntDriver<'d>>,
     position: Arc<AtomicI64>,
@@ -19,18 +20,24 @@ pub struct Encoder<'d> {
 impl<'d> Encoder<'d> {
     pub fn new<'a, PCNT: Pcnt>(
         pcnt: impl Peripheral<P = PCNT> + 'd,
-        mut a_pin: impl Peripheral<P = impl InputPin>,
-        mut b_pin: impl Peripheral<P = impl InputPin>,
+        a_pin: impl Peripheral<P = impl InputPin> + 'd,
+        b_pin: impl Peripheral<P = impl InputPin> + 'd,
         ticks_per_revolution: u32,
         invert: bool,
     ) -> Result<Self, EspError> {
-        let mut pcnt = PcntDriver::new(pcnt)?;
+        let mut pcnt = PcntDriver::new(
+            pcnt,
+            Some(a_pin),
+            Some(b_pin),
+            Option::<AnyInputPin>::None,
+            Option::<AnyInputPin>::None,
+        )?;
         const POS_LIMIT: i16 = 100;
         const NEG_LIMIT: i16 = -100;
         pcnt.channel_config(
             PcntChannel::Channel0,
-            Some(&mut a_pin),
-            Some(&mut b_pin),
+            PinIndex::Pin0,
+            PinIndex::Pin1,
             &PcntChannelConfig {
                 lctrl_mode: PcntControlMode::Reverse,
                 hctrl_mode: PcntControlMode::Keep,
@@ -42,8 +49,8 @@ impl<'d> Encoder<'d> {
         )?;
         pcnt.channel_config(
             PcntChannel::Channel1,
-            Some(&mut b_pin),
-            Some(&mut a_pin),
+            PinIndex::Pin1,
+            PinIndex::Pin0,
             &PcntChannelConfig {
                 lctrl_mode: PcntControlMode::Reverse,
                 hctrl_mode: PcntControlMode::Keep,

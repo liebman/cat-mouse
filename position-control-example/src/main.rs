@@ -107,21 +107,21 @@ fn main() -> anyhow::Result<()> {
     position_right.send(PositionControlCmd::SetPosition(10000))?;
     while position_left.is_active() && position_right.is_active() {
         reporter.update(position_left.get_position(), position_right.get_position());
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
     info!("done");
-    delay.delay_ms(1000)?;
+    delay.delay_ms(1000);
     info!("reverse");
     position_left.send(PositionControlCmd::SetPosition(0))?;
     position_right.send(PositionControlCmd::SetPosition(0))?;
     while position_left.is_active() && position_right.is_active() {
         reporter.update(position_left.get_position(), position_right.get_position());
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
     info!("done");
 
     loop {
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
 }
 

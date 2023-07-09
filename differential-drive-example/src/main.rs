@@ -115,25 +115,25 @@ fn main() -> anyhow::Result<()> {
     drive.send(DriveCmd::Move(10000))?;
     while drive.is_active() {
         reporter.update(wheel_left.get_position(), wheel_right.get_position());
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
     info!("done");
-    delay.delay_ms(1000)?;
+    delay.delay_ms(1000);
 
     info!("left");
     drive.send(DriveCmd::Rotate(-180))?;
     while drive.is_active() {
         reporter.update(wheel_left.get_position(), wheel_right.get_position());
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
     info!("done");
-    delay.delay_ms(1000)?;
+    delay.delay_ms(1000);
 
     info!("right");
     drive.send(DriveCmd::Rotate(180))?;
     while drive.is_active() {
         reporter.update(wheel_left.get_position(), wheel_right.get_position());
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
     info!("done");
 
@@ -141,12 +141,12 @@ fn main() -> anyhow::Result<()> {
     drive.send(DriveCmd::Move(-10000))?;
     while drive.is_active() {
         reporter.update(wheel_left.get_position(), wheel_right.get_position());
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
     info!("done");
 
     loop {
-        delay.delay_ms(1000)?;
+        delay.delay_ms(1000);
     }
 }
 

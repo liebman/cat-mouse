@@ -21,7 +21,7 @@ pub enum DriveCmd {
 }
 
 #[allow(dead_code)]
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Drive<'d> {
     tx: Sender<DriveCmd>,
     left_wheel: Wheel<'d>,

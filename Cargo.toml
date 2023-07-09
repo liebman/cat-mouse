@@ -25,11 +25,11 @@ edition = "2021"
 
 [workspace.dependencies]
 bitflags = { version = "2.0.0-rc.1" }
-embedded-hal = { version = "=1.0.0-alpha.9" }
-embedded-svc = { version = "0.24", features = ["experimental"] }
-esp-idf-hal = { version = "0.40" }
-esp-idf-svc = { version = "0.45", features = ["experimental"] }
-esp-idf-sys = { version = "0.32", features = ["binstart"] }
+embedded-hal = { version = "=1.0.0-alpha.10" }
+embedded-svc = { version = "0.25", features = ["experimental"] }
+esp-idf-hal = { version = "0.41" }
+esp-idf-svc = { version = "0.46", features = ["experimental"] }
+esp-idf-sys = { version = "0.33", features = ["binstart"] }
 lidar-ld19 = { version = "0", path = "../lidar-ld19" }
 log = { version = "0.4" }
 pid = { version = "3.0.0" }
@@ -41,7 +41,9 @@ retry = { version = "2.0.0" }
 url = { version = "2.3.1" }
 
 [patch.crates-io]
-esp-idf-hal = { git = "https://github.com/liebman/esp-idf-hal", branch = "pcnt_idf_v4" }
+esp-idf-hal = { path = "../esp-idf-hal" }
+esp-idf-svc = {git = "https://github.com/esp-rs/esp-idf-svc.git"}
+esp-idf-sys = {git = "https://github.com/esp-rs/esp-idf-sys.git"}
 
 [profile.release]
 opt-level = "s"
