@@ -56,8 +56,8 @@ impl SystemPeripherals<CHANNEL0, CHANNEL1, TIMER0, I2C0, PCNT0, PCNT1, UART1> {
             },
             lidar: LidarPeripherals {
                 uart: peripherals.uart1,
-                serial: peripherals.pins.gpio42.into(),
-                power: peripherals.pins.gpio41.into(),
+                serial: peripherals.pins.gpio1.into(),
+                power: peripherals.pins.gpio2.into(),
             },
             modem: peripherals.modem,
         }

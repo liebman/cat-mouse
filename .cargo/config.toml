@@ -1,6 +1,8 @@
 [alias]
-flash = "espflash flash --monitor  -b 921600 -p /dev/tty.usbmodem14644401"
-monitor = "espflash monitor -b 921600 -p /dev/tty.usbmodem14644401"
+flash = "espflash flash --monitor  -b 921600 -p /dev/tty.usbmodem14644301"
+monitor = "espflash monitor -b 921600 -p /dev/tty.usbmodem14644301"
+flashserial = "espflash flash --monitor -p /dev/tty.usbserial-14644301"
+monitorserial = "espflash monitor -p /dev/tty.usbserial-14644301"
 
 [build]
 # Uncomment the relevant target for your chip here (ESP32, ESP32-S2, ESP32-S3 or ESP32-C3)

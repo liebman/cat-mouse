@@ -25,14 +25,14 @@ fn main() -> anyhow::Result<()> {
         .flow_control(uart::config::FlowControl::None);
     let uart = uart::UartRxDriver::new(
         peripherals.uart1,
-        peripherals.pins.gpio42,
+        peripherals.pins.gpio1,
         None::<AnyInputPin>,
         None::<AnyOutputPin>,
         &config,
     )?;
 
     info!("create lidar");
-    let mut lidar = Lidar::new(uart, peripherals.pins.gpio41.into());
+    let mut lidar = Lidar::new(uart, peripherals.pins.gpio2.into());
     loop {
         info!("power lidar on");
         lidar.set_power_on();
