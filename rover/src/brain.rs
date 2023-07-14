@@ -23,6 +23,8 @@ pub enum BrainCmd {
     State(bool), // on/off
     Move(i64),
     Rotate(i64),
+    Left(i64),
+    Right(i64),
     LidarOnOff(bool),
 }
 
@@ -72,6 +74,26 @@ impl Brain {
                                     info!("rotate({drive_cmd:?})");
                                     if let Err(err) = drive.send(drive_cmd) {
                                         error!("failed to send rotate command: {err}");
+                                    }
+                                }
+                                BrainCmd::Left(distance) => {
+                                    let drive_cmd = match distance {
+                                        0 => DriveCmd::Stop,
+                                        _ => DriveCmd::Left(distance),
+                                    };
+                                    info!("left({drive_cmd:?})");
+                                    if let Err(err) = drive.send(drive_cmd) {
+                                        error!("failed to send left command: {err}");
+                                    }
+                                }
+                                BrainCmd::Right(distance) => {
+                                    let drive_cmd = match distance {
+                                        0 => DriveCmd::Stop,
+                                        _ => DriveCmd::Right(distance),
+                                    };
+                                    info!("left({drive_cmd:?})");
+                                    if let Err(err) = drive.send(drive_cmd) {
+                                        error!("failed to send right command: {err}");
                                     }
                                 }
                                 BrainCmd::LidarOnOff(value) => {

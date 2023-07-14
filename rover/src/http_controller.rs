@@ -128,6 +128,8 @@ impl HttpController {
     ) -> HandlerResult {
         let mut move_value: Option<i64> = None;
         let mut rotate_value: Option<i64> = None;
+        let mut left: bool = false;
+        let mut right: bool = false;
         let mut stop = false;
         let mut result: String = "OK".to_string();
         let url = Self::parse_uri(request.connection().uri())?;
@@ -145,6 +147,10 @@ impl HttpController {
                 } else {
                     rotate_value = Some(v.parse()?);
                 }
+            } else if n == "left" {
+                left = true;
+            } else if n == "right" {
+                right = true;
             }
         }
         if stop {
@@ -152,7 +158,19 @@ impl HttpController {
         } else if move_value.is_some() && rotate_value.is_some() {
             result = "Can't move and rotate at the same time!".to_string();
         } else if let Some(value) = move_value {
-            brain.send(BrainCmd::Move(value))?;
+            if left {
+                brain.send(BrainCmd::Left(value))?;
+            }
+            if right {
+                brain.send(BrainCmd::Right(value))?;
+            }
+            if !left && !right {
+                brain.send(BrainCmd::Move(value))?;
+            }
+        } else if let Some(value) = rotate_value {
+            brain.send(BrainCmd::Rotate(value))?;
+        } else if let Some(value) = rotate_value {
+            brain.send(BrainCmd::Rotate(value))?;
         } else if let Some(value) = rotate_value {
             brain.send(BrainCmd::Rotate(value))?;
         }

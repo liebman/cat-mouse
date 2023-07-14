@@ -17,6 +17,8 @@ pub enum DriveCmd {
     Drive((f32, f32, f32)),
     Rotate(i64),
     Move(i64),
+    Left(i64),
+    Right(i64),
     Stop,
 }
 
@@ -90,6 +92,17 @@ impl<'d> Drive<'d> {
                             // left_wheel.send(PositionControlCmd::SetPosition(pos_left)).unwrap();
                             // _right_sender.send(PositionControlCmd::SetPosition(pos_right)).unwrap();
                         }
+                        DriveCmd::Left(distance) => {
+                            info!("LeftWheel {distance}");
+                            let pos_left = left_wheel.get_position() + distance;
+                            left_wheel.set_position(pos_left).unwrap();
+
+                        },
+                        DriveCmd::Right(distance) => {
+                            info!("RightWheel {distance}");
+                            let pos_right = right_wheel.get_position() + distance;
+                            right_wheel.set_position(pos_right).unwrap();
+                        },
                         DriveCmd::Stop => {
                             left_wheel.stop().unwrap();
                             right_wheel.stop().unwrap();
