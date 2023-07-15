@@ -168,7 +168,7 @@ impl<'d> Simple<'d> {
                     let front = frame.get_range_front();
                     let left = frame.get_range_left();
                     let right = frame.get_range_right();
-                    if front < 500 || left < 250 || right < 250 {
+                    if front < 500 || left < 100 || right < 100 {
                         self.display_ranges(&frame);
                         info!("Moving: too close, back to SearchChoice");
                         self.drive.send(DriveCmd::Stop)?;
